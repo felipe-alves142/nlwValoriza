@@ -1,12 +1,28 @@
-import express from "express";
-
+import "reflect-metadata";
+import express, { response } from "express";
+import "express-async-errors"
+import { router } from "./routes";
+import "./database";
+import {Response, Request,NextFunction} from "express";
 const app = express();
-app.get("/test",(request,response) =>{
-    return response.send("Ola get");
-})
-app.post("/test-post", (request, response) => {
-    return response.send("Olá post NLW!")
-})
+app.use(express.json());
 
+app.use(router);
+
+app.use((err:Error, request:Request, response:Response, next:NextFunction) =>{
+    if(err instanceof Error){
+        return response.status(400).json({
+            error: err.message
+        }) 
+    }
+    else{
+        return response.status(500).json({
+            status:"error",
+            message:"Internal Server Error"
+        })
+    }
+    
+    
+})
 
 app.listen(3000, () => console.log("Server is runnig nlw"));
